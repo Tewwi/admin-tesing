@@ -35,19 +35,20 @@ const PostsManagement = () => {
     const dataJSON = await fetch(API_URL);
     const data: IPost[] = await dataJSON.json();
     const endIndex = page * ITEM_PER_PAGE;
-    let result: IPost[];
+    let result: IPost[] = data;
 
-    switch(by) {
-      case "userId":
-        result = data.filter((post) => post.id === query);
-        break;
-      case "title":
-        result = data.filter((post) => post.title.includes(query || ""));
-        break;
-      default:
-        result = data
+    if (query !== "") {
+      switch (by) {
+        case "userId":
+          result = data.filter((post) => post.id === query);
+          break;
+        case "title":
+          result = data.filter((post) => post.title.includes(query || ""));
+          break;
+        default:
+          break;
+      }
     }
-    
 
     setTotalPage(data.length);
     setPosts(result.slice(endIndex - ITEM_PER_PAGE, endIndex));

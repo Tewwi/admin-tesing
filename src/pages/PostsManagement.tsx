@@ -32,13 +32,25 @@ const PostsManagement = () => {
     const query = currentQueryParameters.get("query");
     const by = currentQueryParameters.get("by");
 
-    const queryAPI = query ? `${API_URL}?${by}=${query}` : API_URL;
-    const dataJSON = await fetch(queryAPI);
+    const dataJSON = await fetch(API_URL);
     const data: IPost[] = await dataJSON.json();
     const endIndex = page * ITEM_PER_PAGE;
+    let result: IPost[];
+
+    switch(by) {
+      case "userId":
+        result = data.filter((post) => post.id === query);
+        break;
+      case "title":
+        result = data.filter((post) => post.title.includes(query || ""));
+        break;
+      default:
+        result = data
+    }
+    
 
     setTotalPage(data.length);
-    setPosts(data.slice(endIndex - ITEM_PER_PAGE, endIndex));
+    setPosts(result.slice(endIndex - ITEM_PER_PAGE, endIndex));
     setLoading(false);
   }, [currentQueryParameters]);
 

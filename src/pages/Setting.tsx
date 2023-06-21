@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, Button } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import ColorPicker from "../components/setting/ColorPicker";
@@ -18,7 +18,15 @@ interface ISettingForm {
 
 const Setting = () => {
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const { control, watch, setValue } = useForm<ISettingForm>({
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { isDirty },
+    reset,
+    clearErrors,
+  } = useForm<ISettingForm>({
     defaultValues: {
       title: "",
       email: "",
@@ -29,14 +37,29 @@ const Setting = () => {
       },
     },
   });
-
   const dateValue = watch("activeDate");
+
+  const onSubmit = (value: ISettingForm) => {
+    reset(value);
+    console.log(value);
+  };
 
   return (
     <Container sx={{ py: "16px" }}>
       <Typography variant="h5" sx={{ color: "primary.main", mb: 4 }}>
         Setting
       </Typography>
+
+      <Box
+        px={16}
+        display="flex"
+        justifyContent="flex-end"
+        onClick={handleSubmit(onSubmit)}
+      >
+        <Button disabled={!isDirty} variant="contained">
+          Save
+        </Button>
+      </Box>
 
       <Box display="flex" flexWrap="wrap" my={4} justifyContent="space-evenly">
         <Box display="flex" flexDirection="column">
@@ -46,7 +69,9 @@ const Setting = () => {
           <TextFieldForm
             control={control}
             name="title"
-            rules={{ required: true }}
+            rules={{
+              required: { value: true, message: "Please fill this field" },
+            }}
             size="medium"
           />
         </Box>
@@ -59,7 +84,7 @@ const Setting = () => {
             control={control}
             name="email"
             rules={{
-              required: true,
+              required: { value: true, message: "Please fill this field" },
               pattern: {
                 value: patternEmail,
                 message: "Invalid email address",
@@ -78,7 +103,9 @@ const Setting = () => {
           <TextFieldForm
             control={control}
             name="backgroundColor"
-            rules={{ required: true }}
+            rules={{
+              required: { value: true, message: "Please fill this field" },
+            }}
             size="medium"
             sx={{ paddingRight: "4px", maxWidth: "223px" }}
             endAdornment={
@@ -97,7 +124,10 @@ const Setting = () => {
           <ColorPicker
             color={watch("backgroundColor")}
             openColorPicker={openColorPicker}
-            handleChangeColor={(color) => setValue("backgroundColor", color)}
+            handleChangeColor={(color) => {
+              setValue("backgroundColor", color);
+              clearErrors("backgroundColor");
+            }}
             handleClose={() => setOpenColorPicker(false)}
           />
         </Box>
@@ -114,6 +144,17 @@ const Setting = () => {
                 startDate: date[0],
                 endDate: date[1],
               });
+            }}
+            control={control}
+            name="activeDate"
+            rules={{
+              validate: {
+                value: (value: any) => {
+                  if (Object.values(value)?.includes(null)) {
+                    return "Please fill all this field";
+                  }
+                },
+              },
             }}
           />
         </Box>

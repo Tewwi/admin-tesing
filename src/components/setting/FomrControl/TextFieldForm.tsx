@@ -22,6 +22,7 @@ const TextFieldForm = (props: Props) => {
     control,
     rules,
   });
+
   return (
     <>
       <OutlinedInput
@@ -35,10 +36,7 @@ const TextFieldForm = (props: Props) => {
       />
       <Typography
         variant="body2"
-        sx={{
-          color: "palette.error.main",
-          display: !!error ? "block" : "none",
-        }}
+        color={'red'}
       >
         {error?.message || ""}
       </Typography>

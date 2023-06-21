@@ -20,10 +20,10 @@ const ColorPicker = (props: Props) => {
           right: 0,
           bottom: 0,
           left: 0,
-          zIndex: -1,
+          zIndex: 1,
         }}
         onClick={handleClose}
-      ></Box>
+      />
       <ChromePicker
         color={color}
         onChangeComplete={(color) => {

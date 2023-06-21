@@ -1,9 +1,8 @@
-import { Box, Container, OutlinedInput, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import ColorPicker from "../components/setting/ColorPicker";
+import DateRangeForm from "../components/setting/FomrControl/DateRangeForm";
 import TextFieldForm from "../components/setting/FomrControl/TextFieldForm";
 import { patternEmail } from "../contanst";
 
@@ -81,7 +80,7 @@ const Setting = () => {
             name="backgroundColor"
             rules={{ required: true }}
             size="medium"
-            sx={{ paddingRight: "4px" }}
+            sx={{ paddingRight: "4px", maxWidth: "223px" }}
             endAdornment={
               <Box
                 onClick={() => setOpenColorPicker(true)}
@@ -107,18 +106,15 @@ const Setting = () => {
           <Typography variant="body1" sx={{ color: "primary.main", mb: 1 }}>
             Active Date:
           </Typography>
-          <DatePicker
-            selected={dateValue.startDate}
+          <DateRangeForm
+            startDate={dateValue.startDate}
+            endDate={dateValue.endDate}
             onChange={(date) => {
               setValue("activeDate", {
                 startDate: date[0],
                 endDate: date[1],
               });
             }}
-            startDate={dateValue.startDate}
-            endDate={dateValue.endDate}
-            selectsRange
-            customInput={<OutlinedInput />}
           />
         </Box>
       </Box>

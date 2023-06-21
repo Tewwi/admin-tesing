@@ -74,28 +74,7 @@ const LineChartComp = (props: ILineChartCompProps) => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="name"
-          height={60}
-          tick={(props) => {
-            const { x, y, ...rest } = props;
-
-            return (
-              <g transform={`translate(${x},${y})`}>
-                <text
-                  fontSize={10}
-                  x={0}
-                  y={0}
-                  dy={16}
-                  textAnchor="end"
-                  fill="#666"
-                >
-                  {rest.value}
-                </text>
-              </g>
-            );
-          }}
-        />
+        <XAxis dataKey="name" height={60} />
         <YAxis />
         <Tooltip />
         <Legend wrapperStyle={{ top: "-20px", left: "40%" }} />

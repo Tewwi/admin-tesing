@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../api";
 import DetailPostDialog from "../components/posts_management/DetailPostDialog";
 import FilterPostForm from "../components/posts_management/FilterPost";
-import PostTable from "../components/posts_management/table";
+import PostTable from "../components/posts_management/PostTable";
 import { ITEM_PER_PAGE } from "../contanst";
 import { IFilterPost, IPost } from "../interface/post";
 
@@ -25,25 +25,14 @@ const PostsManagement = () => {
     open: false,
   });
 
-  const [filterValue, setFilterValue] = useState<IFilterPost>(() => {
-    return {
-      query: currentQueryParameters.get("query") || "",
-      by: (currentQueryParameters.get("by") as any) || "userId",
-    };
-  });
-
-  const [page, setPage] = useState<number>(() => {
-    if (currentQueryParameters.get("page"))
-      return Number(currentQueryParameters.get("page"));
-    return 1;
-  });
-
   const handleGetPostData = useCallback(async () => {
     setLoading(true);
 
-    const queryAPI = filterValue.query
-      ? `${API_URL}?${filterValue.by}=${filterValue.query}`
-      : API_URL;
+    const page = Number(currentQueryParameters.get("page")) || 1;
+    const query = currentQueryParameters.get("query");
+    const by = currentQueryParameters.get("by");
+
+    const queryAPI = query ? `${API_URL}?${by}=${query}` : API_URL;
     const dataJSON = await fetch(queryAPI);
     const data: IPost[] = await dataJSON.json();
     const endIndex = page * ITEM_PER_PAGE;
@@ -51,12 +40,11 @@ const PostsManagement = () => {
     setTotalPage(data.length);
     setPosts(data.slice(endIndex - ITEM_PER_PAGE, endIndex));
     setLoading(false);
-  }, [filterValue, page]);
+  }, [currentQueryParameters]);
 
   const handleChangePage = (number: number) => {
-    setPage(number);
-    newQueryParameters.set("page", `${number}`);
-    setSearchParams(newQueryParameters);
+    currentQueryParameters.set("page", `${number}`);
+    setSearchParams(currentQueryParameters);
   };
 
   const handleOpenDetailDialog = (post: IPost) => {
@@ -66,8 +54,8 @@ const PostsManagement = () => {
   const handleFilter = (value: IFilterPost) => {
     newQueryParameters.set("by", value.by);
     newQueryParameters.set("query", value.query);
+    newQueryParameters.set("page", `1`);
     setSearchParams(newQueryParameters);
-    setFilterValue(value);
   };
 
   useEffect(() => {
@@ -80,7 +68,13 @@ const PostsManagement = () => {
         Post Management
       </Typography>
 
-      <FilterPostForm value={filterValue} handleChange={handleFilter} />
+      <FilterPostForm
+        value={{
+          query: currentQueryParameters.get("query") || "",
+          by: (currentQueryParameters.get("by") as any) || "userId",
+        }}
+        handleChange={handleFilter}
+      />
       <PostTable
         data={posts}
         handleViewDetail={handleOpenDetailDialog}
@@ -89,7 +83,7 @@ const PostsManagement = () => {
       <Pagination
         sx={{ mt: 2.5, display: "flex", justifyContent: "flex-end" }}
         count={ceil(totalPage / ITEM_PER_PAGE)}
-        page={page}
+        page={Number(currentQueryParameters.get("page")) || 1}
         color="primary"
         onChange={(_, number) => {
           handleChangePage(number);

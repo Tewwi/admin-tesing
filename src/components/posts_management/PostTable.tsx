@@ -20,7 +20,7 @@ interface IPostTableProps {
 const PostTable = (props: IPostTableProps) => {
   const { data, handleViewDetail, loading } = props;
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ position: "relative" }}>
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
           <TableRow>

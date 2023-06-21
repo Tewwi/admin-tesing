@@ -24,7 +24,7 @@ const Loading = (props: LoaderProps) => {
           width: "100%",
         }}
       >
-        <CircularProgress style={{ color: "#fb8c00" }} />
+        <CircularProgress style={{ color: "blue" }} />
       </div>
     </Backdrop>
   );
